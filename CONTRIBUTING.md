@@ -35,6 +35,7 @@ comments.
   the access patterns of diskspd threads on target files, and other options. Porting relevant parts
   of this to README.md would make understanding various options like -T and -s much easier for
   users.
+- Separate iowait and idle time in CPU usage report
 - Use more C++ features - e.g. replace perf\_clock.h with C++11's chrono::high\_resolution\_timer
 - Convert raw byte sizes to rounded KB, MB etc in results
 - File creation speed - parallelize with libaio
@@ -64,3 +65,12 @@ Linux version.
   started at the same offset
 - Progress indicator (-P)
 - More -Z options; e.g. for using a file as a source for the I/O buffers
+
+## Azure specific features
+
+These features will be added specifically for benchmarking Azure Linux systems, but may be useful in
+other contexts too.
+
+- print out which io scheduler is in use in the kernel
+- print out whether fua caching is in use (available through sysfs)
+    - print other relevant host caching settings
