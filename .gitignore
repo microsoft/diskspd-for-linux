@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# bin directory
+bin
+# director we store prerequesites in
+.d
+# editor tools
+*.swp
+tags
+cscope.out
