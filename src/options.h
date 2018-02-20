@@ -29,7 +29,7 @@ namespace diskspd {
 		SEQUENTIAL_STRIDE,
 		CACHING_OPTIONS,
 		THREADS_PER_TARGET,
-		TARGET_STRIDE,
+		THREAD_STRIDE,
 		VERBOSE,
 		IO_ENGINE,
 		WRITE,
@@ -483,22 +483,21 @@ namespace diskspd {
 					{
 						(int)'T',
 						{
-							type: TARGET_STRIDE,
+							type: THREAD_STRIDE,
 							flags: OPT_BYTE_SIZE,
 							arg: "",
 							opt:
 							{
-								name:"target-stride",
+								name:"thread-stride",
 								key:(int)'T',
-								arg:"TARGET-STRIDE[K|M|G|b]",
+								arg:"THREAD-STRIDE[K|M|G|b]",
 								flags:0,
 								doc:
-
-									"Stride size between I/O operations performed on the same "
-									"target by different threads in bytes or KiB(K), MiB(M), "
-									"GiB(G), or blocks(b) (default stride size = 0; starting "
-									"offset = base file offset + (<thread number> * <offset>). "
-									"Makes sense only when number of threads per target > 1.\n",
+									"Stride size between starting offsets of each thread operating "
+									"on the same target in bytes or KiB(K), MiB(M), GiB(G), or "
+									"blocks(b). (default = 0) The starting offset of a thread = base "
+									"file offset + thread number * thread stride. Has no effect if "
+									"there is only one thread per target.\n",
 								group:0
 							}
 						}

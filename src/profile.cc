@@ -195,9 +195,9 @@ namespace diskspd
 		options.arg_to_number<unsigned int>(THREADS_PER_TARGET, 0, &dummy.threads_per_target);
 
 		// -T
-		if (options.arg_to_number<off_t>(TARGET_STRIDE, dummy.block_size, &dummy.thread_offset)) {
+		if (options.arg_to_number<off_t>(THREAD_STRIDE, dummy.block_size, &dummy.thread_offset)) {
 			if (dummy.use_interlocked) {
-				fprintf(stderr, "Stride between threads must be 0 if using -si");
+				fprintf(stderr, "Stride between threads must be 0 if using -si\n");
 				return false;
 			}
 		}
