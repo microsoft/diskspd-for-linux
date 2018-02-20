@@ -17,8 +17,8 @@ comments.
 
 ## Getting started
 
-1. Read the README.md, compile and run diskspd, and understand how to use the the various options
-   available.
+1. Read the README.md, compile and run diskspd, read the wiki on GitHub, and understand how to use
+   the various options available.
 2. Read HOWITWORKS.md and the code itself to get a sense of how the project is structured.
 3. Identify something you want to fix or improve, or a feature that should be added.
     - README.md contains a list of planned features.
@@ -31,11 +31,6 @@ comments.
 
 ## Planned improvements
 
-- Documentation. The Windows tool has a helpful PDF guide explaining how different options affect
-  the access patterns of diskspd threads on target files, and other options. Porting relevant parts
-  of this to README.md would make understanding various options like -T and -s much easier for
-  users.
-- Separate iowait and idle time in CPU usage report
 - Use more C++ features - e.g. replace perf\_clock.h with C++11's chrono::high\_resolution\_timer
 - Convert raw byte sizes to rounded KB, MB etc in results
 - File creation speed - parallelize with libaio
@@ -56,6 +51,15 @@ comments.
 - Possible bugs with Iops std-dev calculation - it seems to match diskspd for Windows behaviour
   however. This could be an issue with how the IoBucketizer is used, or something else.
 
+## Azure specific features
+
+These features will be added specifically for benchmarking Azure Linux systems, but may be useful in
+other contexts too.
+
+- print out which io scheduler is in use in the kernel
+- print out whether fua caching is in use (available through sysfs)
+    - print other relevant host caching settings
+
 ## Windows diskspd features
 
 These are some features the Windows version has that are low-priority or may not be necessary in the
@@ -66,11 +70,4 @@ Linux version.
 - Progress indicator (-P)
 - More -Z options; e.g. for using a file as a source for the I/O buffers
 
-## Azure specific features
 
-These features will be added specifically for benchmarking Azure Linux systems, but may be useful in
-other contexts too.
-
-- print out which io scheduler is in use in the kernel
-- print out whether fua caching is in use (available through sysfs)
-    - print other relevant host caching settings

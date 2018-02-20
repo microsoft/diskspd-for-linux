@@ -437,7 +437,7 @@ namespace diskspd {
 
 		for (auto& c: cpu_stats_init) {
 			// resize the vector
-			results->cpu_usage_percentages[c.first].resize(4);
+			results->cpu_usage_percentages[c.first].resize(5);
 			// copy the init and end vectors for this cpu to make this bit more readable
 			std::vector<double> init, end;
 			init = cpu_stats_init[c.first];
@@ -445,15 +445,18 @@ namespace diskspd {
 			// differences between end and init will give the actual time in each state
 			// remember 0 = user, 1 = nice, 2 = kernel, 3 = idle, 4 = iowait
 			double total_time = (end[0]+end[1]+end[2]+end[3]+end[4]) - (init[0]+init[1]+init[2]+init[3]+init[4]);
+            // total usage not including iowait or idle time
 			double nonidle = (end[0]+end[1]+end[2]) - (init[0]+init[1]+init[2]);
 			double user = (end[0]+end[1]) - (init[0]+init[1]);
 			double kernel = (end[2]) - (init[2]);
-			double idle = (end[3]+end[4]) - (init[3]+init[4]);
+			double iowait = (end[4]) - (init[4]);
+			double idle = (end[3]) - (init[3]);
 
 			results->cpu_usage_percentages[c.first][0] = nonidle/total_time;
 			results->cpu_usage_percentages[c.first][1] = user/total_time;
 			results->cpu_usage_percentages[c.first][2] = kernel/total_time;
-			results->cpu_usage_percentages[c.first][3] = idle/total_time;
+			results->cpu_usage_percentages[c.first][3] = iowait/total_time;
+			results->cpu_usage_percentages[c.first][4] = idle/total_time;
 		}
 
 		v_printf("Job done\n");

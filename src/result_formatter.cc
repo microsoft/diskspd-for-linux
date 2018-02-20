@@ -98,25 +98,26 @@ namespace diskspd {
 			printf("processor count:   %lu\n\n", profile.sys_info->online_cpus.size());
 
 			// CPU stats
-			double cpu_usage_totals[4] = {0};
-			printf(" CPU  |  Usage	|	User  |  Kernel |	Idle \n");
-			printf("----------------------------------------------\n");
+            unsigned num_cpu_fields = results->cpu_usage_percentages.begin()->second.size();
+			double cpu_usage_totals[num_cpu_fields] = {0};
+			printf(" CPU  |  Usage  |   User  |  Kernel | IO Wait |   Idle \n");
+			printf("-------------------------------------------------------\n");
 			for (auto& usage : results->cpu_usage_percentages) {
 				printf("%5u ", usage.first);
 				// add to the totals and print the usage for each column
-				for (int i = 0; i < 4; ++i) {
+				for (int i = 0; i < num_cpu_fields; ++i) {
 					double u = usage.second[i]*100;
 					cpu_usage_totals[i] += u;
 					printf("| %6.2lf%% ", u);
 				}
 				printf("\n");
 			}
-			printf("----------------------------------------------\n");
+			printf("-------------------------------------------------------\n");
 			printf(" avg:	");
 			// calculate averages from totals and print one at a time
-			for (int i = 0; i < 4; ++i) {
+			for (int i = 0; i < num_cpu_fields; ++i) {
 				double u = cpu_usage_totals[i]/profile.sys_info->online_cpus.size();
-				printf("%6.2lf%%%s", u, (i == 3 ? "\n" : " | ")); // cheeky ternary for newline or bar
+				printf("%6.2lf%%%s", u, (i == num_cpu_fields-1 ? "\n" : " | "));
 			}
 			printf("\n");
 
