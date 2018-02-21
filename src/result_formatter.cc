@@ -43,6 +43,7 @@ namespace diskspd {
 
 			for (auto& target : options->targets) {
 				printf("\tpath: '%s'\n", target->path.c_str());
+				printf("\t\tsize: %luB\n", target->size);
 				if (target->open_flags & O_DIRECT) {
 					printf("\t\tusing O_DIRECT\n");
 				}
