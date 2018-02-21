@@ -42,7 +42,7 @@ You may need to `make clean` first if you already built diskspd without debuggin
 
         diskspd [OPTIONS...] FILE [FILE...]
 
-At least one file must be specified, along with a number of optional arguments.
+At least one file (or disk) must be specified, along with a number of optional arguments.
 Don't leave a space between the option and its argument; some arguments are optional and argp
 doesn't support spaces in this case.
 To have diskspd create files of a specified size, use -c followed by the file size.

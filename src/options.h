@@ -132,7 +132,8 @@ namespace diskspd {
 			// diskspd doc string
 			const char * docstring =
 				"Disk I/O benchmarking tool. Specify desired options followed by name(s) of at "
-				"least one file to do I/O on. Do not leave spaces between an option and argument\n"
+				"least one file or disk to do I/O on. Do not leave spaces between an option and "
+				"argument\n"
 				"NOTE: If you are familiar with the Windows version of this tool, note that some "
 				"options may behave differently or have slightly different defaults. \v"
 				"By Nuno Das Neves (t-nudasn at microsoft dot com)";
