@@ -245,11 +245,10 @@ namespace diskspd {
 
 	std::string SysInfo::device_from_id(dev_t device_id) {
 		// this looks at the symlink in sys/class/block/$dev
-		// and goes back one directory to get the underlying device
-		// i.e. NOT a partition,
-		// then just gets the basename of that.
-		// So essentially:
-		// basename (dirname(readlink /sys/class/block/$dev))
+		// the symlink here ends with "block/$devname/$partitionname" or "block/$devname"
+		// in either case, we get the 'up one' name, ie $devname or "block"
+		// if we get someting that isn't "block", then that's the actual device. otherwise, if it's
+		// "block", we know that the original name is the device name, so just return that
 		
 		// this shouldn't happen if sys-info's been initialized properly
 		if (!id_to_device.count(device_id)) {
@@ -263,12 +262,6 @@ namespace diskspd {
 
 		std::string dev_name = id_to_device[device_id];
 	
-		if (strncmp(dev_name.c_str(), "loop", 4) == 0) {
-			// TODO graceful exit; we can run the job/s without displaying device info...
-			fprintf(stderr, "Sorry, diskspd doesn't support looking up loop device info!\n");
-			exit(1);
-		}
-
 		std::string linkpath = "/sys/class/block/" + dev_name;
 		char the_link[PATH_MAX+1] = {0};
 		ssize_t link_size = readlink(linkpath.c_str(), the_link, PATH_MAX);
@@ -282,9 +275,14 @@ namespace diskspd {
 
 		// these use statically allocated memory, or modify the original path. don't free them
 		char * up_one = dirname(the_link);			// "abc/abc/sda/sda1" -> "abc/abc/sda"
-		char * device_name = basename(up_one);		// "abc/abc/sda" -> "sda"
+		char * up_one_name = basename(up_one);		// "abc/abc/sda" -> "sda"
 
-		return std::string(device_name);
+		// if the device is not a partition, then the 'one up' path is 'block' instead
+		if (strncmp(up_one_name, "block", 5) == 0) {
+			return dev_name;	// so just return the original name we had
+		}
+
+		return std::string(up_one_name);
 	}
 
 	std::string SysInfo::scheduler_from_device(std::string device) {
@@ -348,6 +346,4 @@ namespace diskspd {
 		sz *= 512;	// TODO is this sector size or always 512?
 		return static_cast<off_t>(sz);
 	}
-
-
 }
