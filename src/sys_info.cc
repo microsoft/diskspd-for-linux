@@ -253,11 +253,23 @@ namespace diskspd {
 		
 		// this shouldn't happen if sys-info's been initialized properly
 		if (!id_to_device.count(device_id)) {
-			fprintf(stderr, "Tried to lookup nonexistent device in sys_info!\n");
+			fprintf(
+				stderr,
+				"Tried to lookup nonexistent device %u,%u in sys_info!\n",
+				major(device_id),
+				minor(device_id));
 			exit(1);
 		}
 
-		std::string linkpath = "/sys/class/block/" + id_to_device[device_id];
+		std::string dev_name = id_to_device[device_id];
+	
+		if (strncmp(dev_name.c_str(), "loop", 4) == 0) {
+			// TODO graceful exit; we can run the job/s without displaying device info...
+			fprintf(stderr, "Sorry, diskspd doesn't support looking up loop device info!\n");
+			exit(1);
+		}
+
+		std::string linkpath = "/sys/class/block/" + dev_name;
 		char the_link[PATH_MAX+1] = {0};
 		ssize_t link_size = readlink(linkpath.c_str(), the_link, PATH_MAX);
 		if (link_size == -1) {
@@ -276,19 +288,18 @@ namespace diskspd {
 	}
 
 	std::string SysInfo::scheduler_from_device(std::string device) {
-		// /sys/block/$dev/queue/scheduler
 
 		std::string line;
-		std::ifstream onlinefile(std::string("/sys/block/"+device+"/queue/scheduler"));
+		std::ifstream schedfile(std::string("/sys/block/"+device+"/queue/scheduler"));
 
-		if (!onlinefile.is_open()) {
+		if (!schedfile.is_open()) {
 			fprintf(stderr, "Couldn't open scheduler file for device %s\n", device.c_str());
 			exit(1);
 		}
 
-		std::getline(onlinefile, line);
+		std::getline(schedfile, line);
 
-		onlinefile.close();
+		schedfile.close();
 		
 		// the line of schedulers is like "sched1 sched2 [selectedsched]"
 		char buf[line.size() + 1];
@@ -311,6 +322,32 @@ namespace diskspd {
 		return sched;
 	}
 
+	off_t SysInfo::partition_size(dev_t device_id) {
+		if (!id_to_device.count(device_id)) {
+			fprintf(
+					stderr,
+					"Tried to lookup nonexistent device %u,%u in sys_info!\n",
+					major(device_id),
+					minor(device_id));
+			exit(1);
+		}
+
+		std::string line;
+		std::ifstream sizefile("/sys/class/block/" + id_to_device[device_id] + "/size");
+
+		if (!sizefile.is_open()) {
+			fprintf(stderr, "Couldn't open size file for device\n");
+			exit(1);
+		}
+
+		std::getline(sizefile, line);
+
+		sizefile.close();
+		
+		unsigned long long sz = strtoull(line.c_str(), NULL, 10);
+		sz *= 512;	// TODO is this sector size or always 512?
+		return static_cast<off_t>(sz);
+	}
 
 
 }

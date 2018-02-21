@@ -45,6 +45,11 @@ namespace diskspd {
 		 */
 		std::string scheduler_from_device(std::string device);
 
+		/**
+		 *	Uses sysfs to get the size of a block device or partition given a device id
+		 */
+		off_t partition_size(dev_t device_id);
+
 
 		// for debugging
 		std::string print_sys_info();

@@ -173,7 +173,8 @@ namespace diskspd {
 			struct stat buf = {0};
 			int err = stat(target->path.c_str(), &buf);
 
-			target->device = options->sys_info->device_from_id(buf.st_dev);
+			// use appropriate device id (st_dev != st_rdev if target is a device)
+			target->device = options->sys_info->device_from_id(buf.st_rdev ? buf.st_rdev : buf.st_dev);
 			target->scheduler = options->sys_info->scheduler_from_device(target->device);
 		}
 

@@ -334,7 +334,12 @@ namespace diskspd
 					return false;
 				}
 
-				target->size = buf.st_size;
+				// if it's a device, we need to get the size through sysfs
+				if (buf.st_rdev) {
+					target->size = sys_info->partition_size(buf.st_rdev);
+				} else {
+					target->size = buf.st_size;
+				}
 
 			} else {
 				// create option shouldn't be used when specifying an existing device, so error
