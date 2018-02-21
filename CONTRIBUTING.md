@@ -56,8 +56,8 @@ comments.
 These features will be added specifically for benchmarking Azure Linux systems, but may be useful in
 other contexts too.
 
-- print out which io scheduler is in use in the kernel
-- print out whether fua caching is in use (available through sysfs)
+- print out which io scheduler is in use in the kernel (/sys/block/XXX/queue/scheduler)
+- print out whether fua caching is in use (/sys/module/libata/parameters/fua)
     - print other relevant host caching settings
 
 ## Windows diskspd features
