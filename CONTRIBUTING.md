@@ -56,7 +56,7 @@ comments.
 These features will be added specifically for benchmarking Azure Linux systems, but may be useful in
 other contexts too.
 
-- print out whether fua caching is in use (/sys/module/libata/parameters/fua)
+- additional caching options displayed in results
 
 ## Windows diskspd features
 

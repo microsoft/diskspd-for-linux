@@ -17,6 +17,13 @@ namespace diskspd {
 	void ResultFormatterText::output_results(const Profile& profile) {
 		printf("\nCommand Line: %s\n\n", profile.cmd_line.c_str());
 
+		printf("System info:\n");
+		printf("\tprocessor count: %lu\n", profile.sys_info->online_cpus.size());
+		if (profile.sys_info->caching_options.size()) {
+			printf("\tcaching options: %s\n", profile.sys_info->caching_options.c_str());
+		}
+		printf("\n");
+
 		unsigned int jobnum = 1;
 		for (auto& job : profile.jobs) {
 			std::shared_ptr<JobOptions> options = job->get_options();
@@ -37,9 +44,13 @@ namespace diskspd {
 			} else {
 				printf ("\trandom seed: %lu\n", options->rand_seed);
 			}
-			if (options->use_total_threads) {
-				printf("\ttotal threads: %u\n", options->total_threads);
+
+			unsigned int all_threads = options->use_total_threads ? options->total_threads : 0;
+			if (!all_threads) {
+				for (auto& target : options->targets) all_threads += target->threads_per_target;
 			}
+
+			printf("\ttotal threads: %u\n", all_threads);
 
 			for (auto& target : options->targets) {
 				printf("\tpath: '%s'\n", target->path.c_str());
@@ -87,19 +98,10 @@ namespace diskspd {
 			printf("Results for job %u:\n", jobnum);
 			++jobnum;
 
-			printf("*****************************************************\n\n");
 			printf("test time:         %us\n", options->duration);
 
-			// thread count
-			unsigned int all_threads = options->total_threads;
-			if (!all_threads) {
-				for (auto& target : options->targets) all_threads += target->threads_per_target;
-			}
-			printf("thread count:      %u\n", all_threads);
-
-			// processor count
-			printf("processor count:   %lu\n\n", profile.sys_info->online_cpus.size());
-
+			printf("*****************************************************\n\n");
+	
 			// CPU stats
             unsigned num_cpu_fields = results->cpu_usage_percentages.begin()->second.size();
 			double cpu_usage_totals[num_cpu_fields] = {0};

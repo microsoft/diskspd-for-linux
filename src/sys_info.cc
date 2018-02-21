@@ -104,7 +104,6 @@ namespace diskspd {
 		}
 		called = true;
 
-
 		std::string line;
 		std::ifstream onlinefile("/sys/devices/system/cpu/online");
 
@@ -175,7 +174,17 @@ namespace diskspd {
 			// map it for later!
 			id_to_device[dev_stat.st_rdev] = str;
 		}
-		
+
+		// ************* fua caching ****************
+
+		std::ifstream fuafile("/sys/module/libata/parameters/fua");
+
+		// if we can't open it, the kernel probably doesn't know the state of fua, so ignore
+		if (fuafile.is_open()) {
+			std::getline(fuafile,line);
+			fuafile.close();
+			caching_options = "fua="+line;
+		}
 	}
 
 	std::map<unsigned int, std::vector<double> > SysInfo::get_cpu_stats() {

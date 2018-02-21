@@ -14,14 +14,17 @@ namespace diskspd {
 
 	struct SysInfo {
 
-		unsigned int cpulo = 0;
-		unsigned int cpuhi = 0;
+		unsigned int cpulo = 0;	// lowest id
+		unsigned int cpuhi = 0;	// highest id
 
-		std::set<unsigned int> online_cpus = {0};
-		std::set<unsigned int> affinity_cpus = {0};
+		std::set<unsigned int> online_cpus = {0};	// all online cpus
+		std::set<unsigned int> affinity_cpus = {0};	// cpuset specified by user
+
+		// comma separated list of system-wide caching options
+		std::string caching_options;
 
 		/**
-		 *	Populate the the cpu related fields with relevant information, and also id_to_device map
+		 *	Populate the struct with initial information about cpus, devices, caching etc
 		 *	Optionally, provide a string which describes a set of cpus for the affinity_cpus set
 		 */
 		void init_sys_info(const char * affinity_set);
@@ -67,7 +70,6 @@ namespace diskspd {
 			std::map<dev_t, std::string> id_to_device;
 
 	};
-
 }
 
 #endif // DISKSPD_SYS_INFO_H
