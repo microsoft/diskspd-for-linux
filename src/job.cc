@@ -11,10 +11,10 @@
 #include <pthread.h>
 #include <time.h>
 
+#include <sys/stat.h>
 // TODO dynamic sector size discovery
 //#include <sys/ioctl.h>
 //#include <linux/fs.h>
-//#include <sys/stat.h>
 //#include <sys/types.h>
 
 #include "debug.h"
@@ -163,10 +163,19 @@ namespace diskspd {
 				}
 				remaining_bytes -= nbytes;
 			}
-			close(fd);
+			close(fd);	
 		}
 		free(fill_buf);
 		free(zero_buf);
+	
+		// get device name and scheduler for each target
+		for (auto& target : options->targets) {
+			struct stat buf = {0};
+			int err = stat(target->path.c_str(), &buf);
+
+			target->device = options->sys_info->device_from_id(buf.st_dev);
+			target->scheduler = options->sys_info->scheduler_from_device(target->device);
+		}
 
 		/***********************
 		 *	Create ThreadParams

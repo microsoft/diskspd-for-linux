@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <sys/stat.h>
 
 #ifndef DISKSPD_SYS_INFO_H
 #define DISKSPD_SYS_INFO_H
@@ -20,10 +21,10 @@ namespace diskspd {
 		std::set<unsigned int> affinity_cpus = {0};
 
 		/**
-		 *	Populate the struct with relevant system info
+		 *	Populate the the cpu related fields with relevant information, and also id_to_device map
 		 *	Optionally, provide a string which describes a set of cpus for the affinity_cpus set
 		 */
-		void init_system_info(const char * affinity_set);
+		void init_sys_info(const char * affinity_set);
 
 		/**
 		 *	Parse the contents of /proc/stat
@@ -33,16 +34,32 @@ namespace diskspd {
 		 */
 		std::map<unsigned int, std::vector<double> > get_cpu_stats();
 
+		/**
+		 *	Uses sysfs to determine the device name given a device id.
+		 *	Gets the underlying device name
+		 */
+		std::string device_from_id(dev_t device_id);
+
+		/**
+		 *	Uses sysfs to get the scheduler the kernel is using for a given device
+		 */
+		std::string scheduler_from_device(std::string device);
+
+
 		// for debugging
 		std::string print_sys_info();
 
 		private:
-
 			/**
 			 *	parse the string to figure out which cpus are online
 			 *	the format is like 0-7,9,12,32-36 i.e ranges of numbers separated by commas
 			 */
 			static std::set<unsigned int> str_to_cpu_set(const char * s);
+
+			/**
+			 *	device id's mapped to their device or parition name, initialized by init_sys_info
+			 */
+			std::map<dev_t, std::string> id_to_device;
 
 	};
 

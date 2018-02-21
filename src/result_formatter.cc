@@ -78,6 +78,8 @@ namespace diskspd {
 				if (!options->use_total_threads) {
 					printf("\t\tthreads per file: %u\n", target->threads_per_target);
 				}
+				printf("\t\tblock device: %s\n", target->device.c_str());
+				printf("\t\tdevice scheduler: %s\n", target->scheduler.c_str());
 			}
 			printf("\n");
 

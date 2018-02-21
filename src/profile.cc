@@ -77,9 +77,9 @@ namespace diskspd
 
 		// use the argument to create an affinity set if there is one
 		if (curr_arg = options.get_arg(CPU_AFFINITY)) {
-			sys_info->init_system_info(curr_arg);
+			sys_info->init_sys_info(curr_arg);
 		} else {
-			sys_info->init_system_info(nullptr);
+			sys_info->init_sys_info(nullptr);
 		}
 
 		// -b
@@ -319,29 +319,29 @@ namespace diskspd
 			// stat the file
 			struct stat buf = {0};
 			int err = stat(target->path.c_str(), &buf);
-
+			if (err && errno != ENOENT) {
+				fprintf(stderr, "Unexpected error when statting target!\n");
+#ifdef ENABLE_DEBUG
+				perror("stat");
+#endif
+				return false;
+			}
+	
 			if (!target->create_file) {
 				// if the file doesn't exist, error out
 				if (err) {
 					fprintf(stderr, "Target \"%s\" does not exist!\n", target->path.c_str());
 					return false;
 				}
-				// set the size
+
 				target->size = buf.st_size;
-				// and determine the type
-				if (buf.st_rdev) {
-					target->type = Target::TargetType::BLOCK_DEVICE;
-				} else {
-					target->type = Target::TargetType::REGULAR_FILE;
-				}
+
 			} else {
 				// create option shouldn't be used when specifying an existing device, so error
 				if (buf.st_rdev) {
 					fprintf(stderr, "Target \"%s\" is an existing device! Don't use -c!\n", target->path.c_str());
 					return false;
 				}
-				// otherwise, we'll be overwriting the files anyway - everything is set the same
-				target->type = Target::TargetType::REGULAR_FILE;
 
 				// if the file already exists and is larger than the size we need, don't create
 				if (!err && buf.st_size >= dummy.size) {
@@ -372,7 +372,6 @@ namespace diskspd
 						target->block_size);
 				return false;
 			}
-
 		}
 
 		// set the result formatter

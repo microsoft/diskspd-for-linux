@@ -25,17 +25,13 @@ namespace diskspd {
 	 *	Represents a file or device to read/write from
 	 */
 	struct Target {
-		enum TargetType {
-			REGULAR_FILE,
-			BLOCK_DEVICE,
-			UNKNOWN
-		};
 
 		Target(std::string p) : path(p) {}
 		std::string path;
 		off_t size					= 0;			// in bytes
-		TargetType type;	// TODO may not be needed beyond initialization;
-							// Linux doesn't care too much about whether it's a device
+
+		std::string device;		// what block device this target resides on
+		std::string scheduler;	// scheduler this target's block device is currently using
 
 		// TODO get this dynamically somehow (stat/statfs, then ioctl on the mounted device)
 		size_t sector_size			= 512;			// physical block size of storage (to support O_DIRECT)
