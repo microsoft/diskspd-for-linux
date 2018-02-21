@@ -352,7 +352,7 @@ namespace diskspd {
 		sizefile.close();
 		
 		unsigned long long sz = strtoull(line.c_str(), NULL, 10);
-		sz *= 512;	// TODO is this sector size or always 512?
+		sz *= 512;	// linux treats all devices as having a sector size of 512
 		return static_cast<off_t>(sz);
 	}
 }
