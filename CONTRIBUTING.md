@@ -32,9 +32,12 @@ comments.
 ## Planned improvements
 
 - Use more C++ features - e.g. replace perf\_clock.h with C++11's chrono::high\_resolution\_timer
+- Reduce uses of exit() - some features (e.g. SysInfo stuff) aren't essential to the running of the
+  program; instead of exiting it should just print an error message, continue running and omit the
+  relevant information from the results
 - Convert raw byte sizes to rounded KB, MB etc in results
 - File creation speed - parallelize with libaio
-- Move file creation/setup to Target or Profile
+- Move file creation/setup to Target or Profile (a large part is done in Job right now)
 - Test on older kernels/gcc versions etc
     - Should compile with GCC 4.8.1 (earliest feature-complete C++11 implementation)
     - Potentially support kernels as early as 2.6
@@ -67,5 +70,4 @@ Linux version.
   started at the same offset
 - Progress indicator (-P)
 - More -Z options; e.g. for using a file as a source for the I/O buffers
-
 
