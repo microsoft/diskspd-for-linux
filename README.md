@@ -38,6 +38,10 @@ Debug build (enables debugging output with d\_printf() function):
 
 You may need to `make clean` first if you already built diskspd without debugging turned on
 
+Static linking (enables static libraries for binary portability):
+
+        make STATIC=1
+
 ### Usage ###
 
         diskspd [OPTIONS...] FILE [FILE...]
