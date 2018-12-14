@@ -16,6 +16,7 @@
 #include <unistd.h>			// readlink
 #include <dirent.h>			// dirent
 #include <libgen.h>			// basename
+#include <sys/sysmacros.h>
 #include <sys/types.h>		// DIR?
 #include <sys/stat.h>		// stat
 
@@ -138,25 +139,34 @@ namespace diskspd {
 			exit(1);
 		}
 
-		struct dirent* result = nullptr;
-		struct dirent c_b_dirent = {0};
+		struct dirent *c_b_dirent;
 		int err;
 		std::string temp;
 		std::set<std::string> block_devices;
 
 		// loop through the directory stream until we reach the end
-		while (err = readdir_r(c_b_dir, &c_b_dirent, &result), result != nullptr) {
+		while (1) {
+			// In modern implementations (including the glibc implementation),
+			// concurrent calls to readdir() that specify different directory
+			// streams are thread-safe. See "man readdir".
+			errno = 0;
+			c_b_dirent = readdir(c_b_dir);
 
-			if (err) { // only error is EBADF for c_b_dir, realllly unlikely
+			if (errno) { // only error is EBADF for c_b_dir, realllly unlikely
 				fprintf(stderr, "Error in device info initialization\n");
-				perror("readdir_r");
+				perror("readdir");
 				exit(1);
 			}
-			temp = std::string(c_b_dirent.d_name);
+
+			if (!c_b_dirent)
+				break;
+
+			temp = std::string(c_b_dirent->d_name);
 			// ignore hidden files
 			if (temp[0] == '.') continue;
 			block_devices.insert(temp);
 		}
+		closedir(c_b_dir);
 
 		std::string dev_path;
 		struct stat dev_stat = {0};
