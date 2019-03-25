@@ -20,6 +20,11 @@ ifeq ($(DEBUG),1)
 FLAG_DEBUG=-DENABLE_DEBUG=1
 endif
 
+# allow make STATIC=1 to create a static linked executable
+ifeq ($(STATIC),1)
+LDFLAGS= -static -static-libgcc -static-libstdc++ -pthread -lrt -laio
+endif
+
 all:$(BIN)
 
 # link the object files into the target
