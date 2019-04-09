@@ -180,7 +180,7 @@ namespace diskspd {
 				perror("stat");
 				exit(1);
 			}
-			//printf("mapping %u,%u to %s\n", major(dev_stat.st_rdev), minor(dev_stat.st_rdev), str.c_str());
+			printf("mapping %u,%u to %s\n", major(dev_stat.st_rdev), minor(dev_stat.st_rdev), str.c_str());
 			// map it for later!
 			id_to_device[dev_stat.st_rdev] = str;
 		}
@@ -273,7 +273,7 @@ namespace diskspd {
 		if (!id_to_device.count(device_id)) {
 			fprintf(
 				stderr,
-				"Tried to lookup nonexistent device %u,%u in sys_info!\n",
+				"Tried to lookup nonexistent device %u,%u in SysInfo::device_from_id!\n",
 				major(device_id),
 				minor(device_id));
 			exit(1);
@@ -343,7 +343,7 @@ namespace diskspd {
 		if (!id_to_device.count(device_id)) {
 			fprintf(
 					stderr,
-					"Tried to lookup nonexistent device %u,%u in sys_info!\n",
+					"Tried to lookup nonexistent device %u,%u in SysInfo::partition_size!\n",
 					major(device_id),
 					minor(device_id));
 			exit(1);

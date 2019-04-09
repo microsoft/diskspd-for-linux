@@ -172,6 +172,13 @@ namespace diskspd {
 		for (auto& target : options->targets) {
 			struct stat buf = {0};
 			int err = stat(target->path.c_str(), &buf);
+			if (err) {
+				perror("stat");
+				exit(1);
+			}
+			printf("%s\n", target->path.c_str());
+			printf("%u,%u\n", major(buf.st_rdev), minor(buf.st_rdev));
+			printf("%u,%u\n", major(buf.st_dev), minor(buf.st_dev));
 
 			// use appropriate device id (st_dev != st_rdev if target is a device)
 			target->device = options->sys_info->device_from_id(buf.st_rdev ? buf.st_rdev : buf.st_dev);
