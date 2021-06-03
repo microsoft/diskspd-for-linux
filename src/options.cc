@@ -75,6 +75,7 @@ namespace diskspd
 			default:
 				assert(!"Invalid size specifier!");
 		 }
+		return 0;
 	}
 
 	unsigned long long Options::byte_size_from_arg(const char * curr_arg, size_t block_size) {
