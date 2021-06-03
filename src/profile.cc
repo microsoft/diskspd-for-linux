@@ -320,7 +320,7 @@ namespace diskspd
 			struct stat buf = {0};
 			int err = stat(target->path.c_str(), &buf);
 			if (err && errno != ENOENT) {
-				fprintf(stderr, "Unexpected error when statting target!\n");
+				fprintf(stderr, "Unexpected error '%d: %s' when statting %s!\n", errno, strerror(errno), target->path.c_str());
 #ifdef ENABLE_DEBUG
 				perror("stat");
 #endif
