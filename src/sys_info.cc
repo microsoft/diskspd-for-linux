@@ -176,7 +176,7 @@ namespace diskspd {
 			dev_path = "/dev/" + str;
 			int err = stat(dev_path.c_str(), &dev_stat);
 			if (err) {
-				fprintf(stderr, "Unexpected error '%d: %s' when statting device!\n", errno, strerror(errno));
+				fprintf(stderr, "Unexpected error '%d: %s' when statting %s!\n", errno, strerror(errno), dev_path.c_str());
 				perror("stat");
 				exit(1);
 			}
