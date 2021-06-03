@@ -59,7 +59,7 @@ namespace diskspd {
 			/**
 			 *	Get an argument if it was parsed. return null if not
 			 */
-			inline const char * get_arg(OptionType o) { opts.count(o) ? opt_map[opts[o]].arg.c_str() : nullptr; }
+			inline const char * get_arg(OptionType o) { return opts.count(o) ? opt_map[opts[o]].arg.c_str() : nullptr; }
 
 			/**
 			 *	Get the vector of non-option arguments
